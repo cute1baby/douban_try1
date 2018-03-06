@@ -1,0 +1,51 @@
+(1)star组件的问题：
+【1】<v-for="n" :key="n">的时候，此时遇到n重复和报错的问题。
+【2】background-image: url(data:image/png);为何能够生效
+
+(2)跨域问题：
+【1】在config/index.js的proxyTable下面进行设置：
+proxyTable: {    // 解决豆瓣跨域的问题
+      '/v2': {
+        target: 'https://api.douban.com',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/v2': '/v2'
+        }
+      }
+    }
+【副本】：
+在登录部分的store中有一个跨域问题,但是该跨域的网址是：https://douban.herokuapp.com，
+而不是https://api.douban.com。所以要解决跨域问题的时候，往往就存在不只有一个目标网址
+的情况，那么此时需要怎么去做呢？
+
+
+
+作用就是将target目录映射到我们设定的host目录下，在访问比如localhost的时候
+类似于访问target目录。
+【2】在vuex中显然axios是在哪个文件里面使用到了就需要在哪个文件单独引入，而不能和组件中
+的Vue.prototype.$http = axios这个设置等同起来。所以我们再vuex中使用的时候一般都会这样：
+import axios from 'axios'
+axios.get('/v2/book/search?q=非虚构类&count=8')
+.then(()=>{
+
+})
+.catch(()=>{
+
+})
+
+【3】vue的传参问题：
+在mutations中定义了一个这样的函数：
+getBook (state, payload) {。。。}
+在actions中这样去调用：
+commit({
+          type: 'getBook',
+          tag: 'novel',
+          res: res.data.books
+        })
+而此时的tag就属于payload.tag   | res就属于payload.res  .这一块不是特别理解
+
+
+【4】当无法连接到网络的时候，无法把项目跑起来。
+
+
+
